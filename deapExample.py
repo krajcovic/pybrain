@@ -63,9 +63,18 @@ def initialization():
     """
     IND_SIZE = 100
     toolbox = base.Toolbox()
-    toolbox.register("attr_bool", random.randint, 0, 1)
-    toolbox.register("individual", tools.initRepeat, creator.Individual, toolbox.attr_bool, n=IND_SIZE)
+    # toolbox.register("attr_bool", random.randint, 0, 1)
+    # toolbox.register("individual", tools.initRepeat, creator.Individual, toolbox.attr_bool, n=IND_SIZE)
+    toolbox.register("attribute", random.random)
+    toolbox.register("individual", tools.initRepeat, creator.Individual, toolbox.attribute, n=IND_SIZE)
+
     toolbox.register("population", tools.initRepeat, list, toolbox.individual)
+
+    toolbox.register("mate", tools.cxTwoPoint)
+    toolbox.register("mutate", tools.mutGaussian, mu=0, sigma=1, indpb=0.1)
+    toolbox.register("select", tools.selTournament, tournsize=3)
+    toolbox.register("evaluate", evalOneMax)
+
     return toolbox
 
 
@@ -76,7 +85,7 @@ def easyComplete(toolbox):
 
     :return:
     """
-    pop = toolbox.population(n=50)
+    pop = toolbox.population(n=20)
     CXPB, MUTPB, NGEN = 0.5, 0.2, 40
 
     # Evaluate the entire population
@@ -87,9 +96,12 @@ def easyComplete(toolbox):
     for g in range(NGEN):
         #Select the next generation individuals
         offspring = toolbox.select(pop, len(pop))
+        # print("Select len: ", len(pop))
 
         # Clone the selected individuals
-        offspring = map(toolbox.clone, offspring)
+        offspring = list(map(toolbox.clone, offspring))
+        # print("Offspring len: ", len(offspring))
+        # print(offspring)
 
         # Apply crossover and mutation on the offspring
         for child1, child2 in zip(offspring[::2], offspring[1::2]):
@@ -105,14 +117,22 @@ def easyComplete(toolbox):
 
         # Evaluate the individuals with an invalid fitness
         invalid_ind = [ind for ind in offspring if not ind.fitness.valid]
-        fitnesses = map(toolbox.evaluate, invalid_ind)
+        fitnesses = list(map(toolbox.evaluate, invalid_ind))
         for ind, fit in zip(invalid_ind, fitnesses):
             ind.fitness.values = fit
 
         # The population is entirely replaced by the offspring
         pop[:] = offspring
+        # print("Population :", len(pop[:]))
+        # print(offspring)
 
     return pop[:]
+
+def displayPopHistory(history):
+    for pop in popHistor:
+        print(pop)
+
+
 
 
 if __name__ == '__main__':
@@ -120,4 +140,6 @@ if __name__ == '__main__':
     doctest.testmod()
 
     createType()
-    print(easyComplete(initialization()))
+
+    popHistor = easyComplete(initialization())
+    displayPopHistory(popHistor)
