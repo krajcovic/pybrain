@@ -11,9 +11,9 @@ from pybrain.tools.validation import CrossValidator
 trainer = BackpropTrainer(net, ds)
 
 fullEpoch = trainer.train()
-print(fullEpoch)
+print("train: ", fullEpoch)
 
 covergence = trainer.trainUntilConvergence()
-print(covergence)
+print("trainUntilConvergence: ", covergence)
 
 # cv = CrossValidator(trainer, ds)

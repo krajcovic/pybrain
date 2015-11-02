@@ -3,7 +3,12 @@
 __author__ = 'krajcovic'
 
 import random
+import time
 from deap import base, creator, tools, algorithms
+# from pylab import plt
+import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.animation as animation
 
 def evalOneMax(individual):
     """
@@ -129,8 +134,39 @@ def easyComplete(toolbox):
     return pop[:]
 
 def displayPopHistory(history):
-    for pop in popHistor:
+
+    # fig = plt.figure()
+
+    for pop in history:
+        plt.clf()
+        plt.scatter(list(range(len(pop))), pop, alpha=0.5)
+        plt.show(block=True)
         print(pop)
+        # time.sleep(1)
+
+
+def animatePopHistory(history):
+
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+
+    # x = np.arange(0, 2*np.pi, 0.01)        # x-array
+    x = np.arange(0, len(history[0]))
+    line, = ax.plot(x, history[0])
+    # x = np.arange(0, 20)
+    # line, = ax.plot(x, x)
+
+    def init():
+        line.set_ydata(np.ma.array(x, mask=True))
+        return line,
+
+    def animate(i):
+        # line.set_ydata(np.sin(x + i/10.0))  # update the data
+        line.set_ydata(history[i])  # update the data
+        return line,
+
+    ani = animation.FuncAnimation(fig, animate, np.arange(1, 20), init_func=init, interval=25, blit=True)
+    plt.show()
 
 
 
@@ -141,5 +177,6 @@ if __name__ == '__main__':
 
     createType()
 
-    popHistor = easyComplete(initialization())
-    displayPopHistory(popHistor)
+    popHistory = easyComplete(initialization())
+    displayPopHistory(popHistory)\
+    # animatePopHistory(popHistory)
