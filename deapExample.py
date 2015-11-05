@@ -136,12 +136,15 @@ def easyComplete(toolbox):
 def displayPopHistory(history):
 
     # fig = plt.figure()
-
+    index = 0
     for pop in history:
+        # index += 1
+        # plt.figure(index)
         plt.clf()
-        plt.scatter(list(range(len(pop))), pop, alpha=0.5)
-        plt.show(block=True)
-        print(pop)
+        # plt.scatter(list(range(len(pop))), pop, alpha=0.5)
+        plt.plot(list(range(len(pop))), pop, 'bo')
+        plt.show(block=False)
+        # print(pop)
         # time.sleep(1)
 
 
